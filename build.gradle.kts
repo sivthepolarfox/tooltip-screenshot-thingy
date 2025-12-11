@@ -28,9 +28,13 @@ dependencies {
     include(libs.resourcefulconfigkt)
 
     modImplementation(libs.modmenu)
+
+    compileOnly(libs.objc)
 }
 
 loom {
+    accessWidenerPath = rootProject.file("src/main/resources/tooltipscreenshot.accesswidener")
+
     runs {
         getByName("client") {
             property("devauth.configDir", rootProject.file(".devauth").absolutePath)

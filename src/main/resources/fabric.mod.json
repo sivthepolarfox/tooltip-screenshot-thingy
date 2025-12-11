@@ -16,7 +16,7 @@
             }
         ],
         "modmenu": [
-            "me.siv.tooltipscreenshot.ModMenuCompat"
+            "me.siv.tooltipscreenshot.config.ModMenuCompat"
         ]
     },
     "mixins": [
@@ -26,5 +26,6 @@
         "fabricloader": ">=${loader_version}",
         "fabric": "*",
         "minecraft": "${minecraft_version}"
-    }
+    },
+    "accessWidener": "tooltipscreenshot.accesswidener"
 }

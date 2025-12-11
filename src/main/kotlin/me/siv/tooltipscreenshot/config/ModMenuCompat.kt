@@ -1,8 +1,9 @@
-package me.siv.tooltipscreenshot
+package me.siv.tooltipscreenshot.config
 
 import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import com.terraformersmc.modmenu.api.ConfigScreenFactory
 import com.terraformersmc.modmenu.api.ModMenuApi
+import me.siv.tooltipscreenshot.TooltipScreenshot
 import net.minecraft.client.gui.screens.Screen
 
 class ModMenuCompat : ModMenuApi {

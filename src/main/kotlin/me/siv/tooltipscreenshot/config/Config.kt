@@ -1,4 +1,4 @@
-package me.siv.tooltipscreenshot
+package me.siv.tooltipscreenshot.config
 
 import com.teamresourceful.resourcefulconfigkt.api.ConfigKt
 

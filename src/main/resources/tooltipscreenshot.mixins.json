@@ -6,7 +6,9 @@
   "mixins": [
   ],
   "client": [
-    "MinecraftMixin"
+    "GuiGraphicsMixin",
+    "GuiRendererMixin",
+    "KeyMappingAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
