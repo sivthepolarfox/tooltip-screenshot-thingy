@@ -70,7 +70,7 @@ object TooltipUtil {
         val encoder: CommandEncoder = device.createCommandEncoder()
         var renderTarget: RenderTarget
         try {
-            renderTarget = TextureTarget(null, fullWidth + 24, height + 24, false)
+            renderTarget = TextureTarget(null, (fullWidth + 24) * Config.scale, (height + 24) * Config.scale, false)
         } catch (e: Exception) {
             Toolshot.error("Failed to create render target")
             e.printStackTrace()
@@ -165,7 +165,7 @@ object TooltipUtil {
                     } else {
                         Component.translatable("toolshot.copy_failure")
                     }
-                    Toolshot.mc.gui.chat.addMessage(Component.literal("[Toolshot] ").append(message))
+                    Toolshot.mc.gui.chat.addMessage(Component.literal("§7[Toolshot] ").append(message))
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

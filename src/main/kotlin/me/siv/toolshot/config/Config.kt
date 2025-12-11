@@ -13,6 +13,10 @@ object Config : ConfigKt("toolshot/config") {
     }
 
     var saveFile by boolean(true) {
-        translation = "config.toolshot.saveFile"
+        this.translation = "config.toolshot.saveFile"
+    }
+
+    var scale by int(1) {
+        this.translation = "config.toolshot.scale"
     }
 }
