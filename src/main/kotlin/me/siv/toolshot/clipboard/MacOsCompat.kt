@@ -1,4 +1,4 @@
-package me.siv.tooltipscreenshot.clipboard
+package me.siv.toolshot.clipboard
 
 import ca.weblite.objc.Client
 import ca.weblite.objc.Proxy

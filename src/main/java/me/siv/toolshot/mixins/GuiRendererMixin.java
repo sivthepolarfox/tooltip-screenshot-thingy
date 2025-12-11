@@ -1,4 +1,4 @@
-package me.siv.tooltipscreenshot.mixins;
+package me.siv.toolshot.mixins;
 
 import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.buffers.GpuBuffer;
@@ -6,7 +6,7 @@ import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import me.siv.tooltipscreenshot.GuiRendererInterface;
+import me.siv.toolshot.GuiRendererInterface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.gui.render.state.GuiRenderState;
@@ -57,7 +57,7 @@ public class GuiRendererMixin implements GuiRendererInterface {
     }
 
     @Unique
-    void tooltipScreenshot$draw(GpuBufferSlice gpuBufferSlice, RenderTarget renderTarget) {
+    void toolShot$draw(GpuBufferSlice gpuBufferSlice, RenderTarget renderTarget) {
         if (!this.draws.isEmpty()) {
             RenderSystem.setProjectionMatrix(this.guiProjectionMatrixBuffer.getBuffer((float) Minecraft.getInstance().getWindow().getGuiScaledWidth(), (float) Minecraft.getInstance().getWindow().getGuiScaledHeight()), ProjectionType.ORTHOGRAPHIC);
             int i = 0;
@@ -84,9 +84,9 @@ public class GuiRendererMixin implements GuiRendererInterface {
     }
 
     @Override
-    public void tooltipScreenshot$render(GpuBufferSlice gpuBufferSlice, RenderTarget renderTarget) {
+    public void toolShot$render(GpuBufferSlice gpuBufferSlice, RenderTarget renderTarget) {
         this.prepare();
-        this.tooltipScreenshot$draw(gpuBufferSlice, renderTarget);
+        this.toolShot$draw(gpuBufferSlice, renderTarget);
 
         for (MappableRingBuffer mappableringbuffer : this.vertexBuffers.values()) {
             mappableringbuffer.rotate();

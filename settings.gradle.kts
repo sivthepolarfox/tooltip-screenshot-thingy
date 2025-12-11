@@ -1,5 +1,5 @@
 
-rootProject.name = "TooltipScreenshot"
+rootProject.name = "Toolshot"
 
 pluginManagement {
     repositories {

@@ -1,8 +1,8 @@
-package me.siv.tooltipscreenshot
+package me.siv.toolshot
 
 import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.pipeline.RenderTarget
 
 interface GuiRendererInterface {
-    fun `tooltipScreenshot$render`(gpuBufferSlice: GpuBufferSlice, renderTarget: RenderTarget)
+    fun `toolShot$render`(gpuBufferSlice: GpuBufferSlice, renderTarget: RenderTarget)
 }

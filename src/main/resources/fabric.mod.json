@@ -1,8 +1,8 @@
 {
     "schemaVersion": 1,
-    "id": "tooltipscreenshots",
+    "id": "toolshot",
     "version": "${version}",
-    "name": "TooltipScreenshots",
+    "name": "Toolshot",
     "description": "",
     "authors": [ ],
     "contact": { },
@@ -12,20 +12,20 @@
         "client": [
             {
                 "adapter": "kotlin",
-                "value": "me.siv.tooltipscreenshot.TooltipScreenshot"
+                "value": "me.siv.toolshot.Toolshot"
             }
         ],
         "modmenu": [
-            "me.siv.tooltipscreenshot.config.ModMenuCompat"
+            "me.siv.toolshot.config.ModMenuCompat"
         ]
     },
     "mixins": [
-        "tooltipscreenshot.mixins.json"
+        "toolshot.mixins.json"
     ],
     "depends": {
         "fabricloader": ">=${loader_version}",
         "fabric": "*",
         "minecraft": "${minecraft_version}"
     },
-    "accessWidener": "tooltipscreenshot.accesswidener"
+    "accessWidener": "toolshot.accesswidener"
 }

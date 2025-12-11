@@ -1,6 +1,6 @@
-package me.siv.tooltipscreenshot.mixins;
+package me.siv.toolshot.mixins;
 
-import me.siv.tooltipscreenshot.TooltipUtil;
+import me.siv.toolshot.TooltipUtil;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;

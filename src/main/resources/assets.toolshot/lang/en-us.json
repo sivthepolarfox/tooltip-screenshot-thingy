@@ -1,0 +1,8 @@
+{
+  "key.toolshot.copy": "Copy Tooltip",
+  "key.category.toolshot.main": "Toolshot",
+  "config.toolshot.saveFile": "Save to File",
+  "config.toolshot.saveFile.desc": "Save the screenshot as a file in your screenshots folder.",
+  "toolshot.copy_success": "Tooltip screenshot copied to clipboard!",
+  "toolshot.copy_failure": "Failed to copy tooltip screenshot to clipboard."
+}

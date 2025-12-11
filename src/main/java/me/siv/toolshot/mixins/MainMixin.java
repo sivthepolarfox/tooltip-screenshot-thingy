@@ -1,4 +1,4 @@
-package me.siv.tooltipscreenshot.mixins;
+package me.siv.toolshot.mixins;
 
 import net.minecraft.client.main.Main;
 import org.spongepowered.asm.mixin.Mixin;

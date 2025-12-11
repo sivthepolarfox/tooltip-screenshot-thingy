@@ -33,7 +33,7 @@ dependencies {
 }
 
 loom {
-    accessWidenerPath = rootProject.file("src/main/resources/tooltipscreenshot.accesswidener")
+    accessWidenerPath = rootProject.file("src/main/resources/toolshot.accesswidener")
 
     runs {
         getByName("client") {

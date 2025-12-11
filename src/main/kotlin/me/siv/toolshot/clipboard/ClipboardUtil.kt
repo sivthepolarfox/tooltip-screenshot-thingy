@@ -1,4 +1,4 @@
-package me.siv.tooltipscreenshot.clipboard
+package me.siv.toolshot.clipboard
 
 import com.mojang.blaze3d.platform.MacosUtil
 import java.awt.Toolkit

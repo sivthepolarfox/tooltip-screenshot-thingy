@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "me.siv.tooltipscreenshot.mixins",
+  "package": "me.siv.toolshot.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
   ],

@@ -1,4 +1,4 @@
-package me.siv.tooltipscreenshot.mixins;
+package me.siv.toolshot.mixins;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;

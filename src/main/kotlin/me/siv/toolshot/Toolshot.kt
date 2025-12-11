@@ -1,9 +1,9 @@
-package me.siv.tooltipscreenshot
+package me.siv.toolshot
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefulconfig.api.types.ResourcefulConfig
-import me.siv.tooltipscreenshot.config.Config
-import me.siv.tooltipscreenshot.mixins.KeyMappingAccessor
+import me.siv.toolshot.config.Config
+import me.siv.toolshot.mixins.KeyMappingAccessor
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
@@ -11,27 +11,25 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.ChatScreen
-import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import org.lwjgl.glfw.GLFW
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-const val MODID = "tooltipscreenshot"
+const val MODID = "toolshot"
 
-object TooltipScreenshot : ClientModInitializer, Logger by LoggerFactory.getLogger(MODID) {
+object Toolshot : ClientModInitializer, Logger by LoggerFactory.getLogger(MODID) {
+    val mc: Minecraft = Minecraft.getInstance()
 
-    val configurator = Configurator("tooltipscreenshot")
+    val configurator = Configurator("toolshot")
     var config: ResourcefulConfig? = null
 
     private val categoryResource = ResourceLocation.fromNamespaceAndPath(MODID, "main")
     val CATEGORY: KeyMapping.Category = KeyMapping.Category.register(categoryResource)
 
-    val mc: Minecraft = Minecraft.getInstance()
-
     val COPY: KeyMapping = KeyBindingHelper.registerKeyBinding(
         KeyMapping(
-            "key.tooltipscreenshot.copy",
+            "key.toolshot.copy",
             GLFW.GLFW_KEY_UNKNOWN,
             CATEGORY
         )
@@ -42,7 +40,6 @@ object TooltipScreenshot : ClientModInitializer, Logger by LoggerFactory.getLogg
         ScreenEvents.BEFORE_INIT.register { client, screen, _, _ ->
             ScreenKeyboardEvents.afterKeyPress(screen).register { _, event ->
                 if (screen is ChatScreen) return@register
-                client.gui.chat.addMessage(Component.literal("Clicked key: ${event.key} (COPY: 70)"))
                 if (event.key == (COPY as KeyMappingAccessor).key.value) {
                     if (TooltipUtil.canRender) {
                         TooltipUtil.copyTooltipToClipboard(TooltipUtil.currentFont!!, TooltipUtil.currentTooltipLines!!, TooltipUtil.currentResourceLocation)

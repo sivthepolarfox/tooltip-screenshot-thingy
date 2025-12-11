@@ -1,5 +1,6 @@
-package me.siv.tooltipscreenshot
+package me.siv.toolshot
 
+import com.ibm.icu.text.SimpleDateFormat
 import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.pipeline.TextureTarget
@@ -12,8 +13,9 @@ import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.ByteBufferBuilder
 import com.mojang.blaze3d.vertex.VertexConsumer
 import it.unimi.dsi.fastutil.objects.Object2ObjectSortedMaps
-import me.siv.tooltipscreenshot.clipboard.ClipboardUtil
-import me.siv.tooltipscreenshot.clipboard.MacOsCompat
+import me.siv.toolshot.clipboard.ClipboardUtil
+import me.siv.toolshot.clipboard.MacOsCompat
+import me.siv.toolshot.config.Config
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.render.GuiRenderer
@@ -28,6 +30,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.channels.Channels
+import java.util.Date
 import java.util.function.Function
 import javax.imageio.ImageIO
 import kotlin.math.max
@@ -53,7 +56,6 @@ object TooltipUtil {
     }
 
     fun copyTooltipToClipboard(font: Font, list: List<ClientTooltipComponent>, rl: ResourceLocation?) {
-        println("Called copyTooltipToClipboard: font=$font, list=$list, rl=$rl")
         var fullWidth = 0
         var height = if (list.size == 1) -2 else 0
 
@@ -63,7 +65,6 @@ object TooltipUtil {
 
             height += component.getHeight(font)
         }
-        println("Calculated dimensions: fullWidth=$fullWidth, height=$height")
 
         val device: GpuDevice = RenderSystem.getDevice()
         val encoder: CommandEncoder = device.createCommandEncoder()
@@ -71,7 +72,7 @@ object TooltipUtil {
         try {
             renderTarget = TextureTarget(null, fullWidth + 24, height + 24, false)
         } catch (e: Exception) {
-            println("Couldnt initialize render target")
+            Toolshot.error("Failed to create render target")
             e.printStackTrace()
             return
         }
@@ -79,14 +80,14 @@ object TooltipUtil {
         val consoomer = OverrideVertexProvider(ByteBufferBuilder(256), renderTarget)
 
         val renderState = GuiRenderState()
-        val context = GuiGraphics(TooltipScreenshot.mc, renderState)
+        val context = GuiGraphics(Toolshot.mc, renderState)
 
-        val renderer = GuiRenderer(renderState, consoomer, SubmitNodeStorage(), TooltipScreenshot.mc.gameRenderer.featureRenderDispatcher, emptyList())
+        val renderer = GuiRenderer(renderState, consoomer, SubmitNodeStorage(), Toolshot.mc.gameRenderer.featureRenderDispatcher, emptyList())
 
         encoder.clearColorTexture(renderTarget.colorTexture, 0)
         context.pose().scale(
-            TooltipScreenshot.mc.window.guiScaledWidth / (fullWidth + 24).toFloat(),
-            TooltipScreenshot.mc.window.guiScaledHeight / (height + 24).toFloat(),
+            Toolshot.mc.window.guiScaledWidth / (fullWidth + 24).toFloat(),
+            Toolshot.mc.window.guiScaledHeight / (height + 24).toFloat(),
         )
 
         TooltipRenderUtil.renderTooltipBackground(context, 0 + 12, 0 + 12, fullWidth, height, rl)
@@ -103,20 +104,17 @@ object TooltipUtil {
             component.renderImage(font, 0 + 12, yOffset + 12, fullWidth, height, context)
             yOffset += component.getHeight(font) + (if (component == list.first()) 2 else 0)
         }
-        (renderer as GuiRendererInterface).`tooltipScreenshot$render`(TooltipScreenshot.mc.gameRenderer.fogRenderer.getBuffer(FogRenderer.FogMode.NONE), renderTarget)
-        println("Finished rendering tooltip")
+        (renderer as GuiRendererInterface).`toolShot$render`(Toolshot.mc.gameRenderer.fogRenderer.getBuffer(FogRenderer.FogMode.NONE), renderTarget)
 
         consoomer.finishDrawing()
-        saveImageToClipboard(renderTarget, MacosUtil.IS_MACOS, true)
-        println("Saved image to clipboard")
+        saveImageToClipboard(renderTarget, MacosUtil.IS_MACOS, Config.saveFile)
 
         renderer.close()
     }
 
-    fun saveImageToClipboard(renderTarget: RenderTarget, macOs: Boolean, shouldSave: Boolean = true) {
+    fun saveImageToClipboard(renderTarget: RenderTarget, macOs: Boolean, shouldSave: Boolean) {
         val width = renderTarget.width
         val height = renderTarget.height
-        println("Trying to save image of size ${width}x${height}")
 
         val gpuTexture = renderTarget.colorTexture
         val gpuBuffer = RenderSystem.getDevice().createBuffer(
@@ -139,9 +137,13 @@ object TooltipUtil {
                 try {
                     var copied = false
                     if (shouldSave || macOs) {
-                        val screenshotDir = File("screenshots/chat")
+                        val screenshotDir = File("screenshots/tooltip")
                         screenshotDir.mkdirs()
-                        val file = File(screenshotDir, "tooltip_${System.currentTimeMillis()}.png")
+
+                        val sdf = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
+                        val currentDate = sdf.format(Date())
+
+                        val file = File(screenshotDir, "tooltip_$currentDate.png")
                         image.writeToFile(file)
                         if (macOs) {
                             copied = MacOsCompat.doCopyMacOS(file.absolutePath)
@@ -158,11 +160,12 @@ object TooltipUtil {
                         val bufferedImage = ImageIO.read(inputStream)
                         copied = ClipboardUtil.copy(bufferedImage)
                     }
-                    if (copied) {
-                        TooltipScreenshot.mc.gui.chat.addMessage(Component.literal("Mrrow"))
+                    val message = if (copied) {
+                        Component.translatable("toolshot.copy_success")
                     } else {
-                        TooltipScreenshot.mc.gui.chat.addMessage(Component.literal("Blehh :("))
+                        Component.translatable("toolshot.copy_failure")
                     }
+                    Toolshot.mc.gui.chat.addMessage(Component.literal("[Toolshot] ").append(message))
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -174,15 +177,14 @@ object TooltipUtil {
     }
 }
 
-class OverrideVertexProvider(bufferAllocator: ByteBufferBuilder, rt: RenderTarget) :
-    MultiBufferSource.BufferSource(
-        bufferAllocator,
-        Object2ObjectSortedMaps.emptyMap<RenderType?, ByteBufferBuilder?>()
-    ) {
+class OverrideVertexProvider(bufferAllocator: ByteBufferBuilder, rt: RenderTarget) : MultiBufferSource.BufferSource(
+    bufferAllocator,
+    Object2ObjectSortedMaps.emptyMap()
+) {
     private val currentLayer: RenderType = TooltipUtil.TOOLTIP_LAYER.apply(rt)
     var bufferBuilder: BufferBuilder = BufferBuilder(this.sharedBuffer, currentLayer.mode(), currentLayer.format())
 
-    override fun getBuffer(renderType: RenderType?): VertexConsumer {
+    override fun getBuffer(renderType: RenderType): VertexConsumer {
         return this.bufferBuilder
     }
 
