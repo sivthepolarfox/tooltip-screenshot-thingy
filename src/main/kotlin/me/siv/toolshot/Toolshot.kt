@@ -39,6 +39,7 @@ object Toolshot : ClientModInitializer, Logger by LoggerFactory.getLogger(MODID)
         config = Config.register(configurator)
         ScreenEvents.BEFORE_INIT.register { client, screen, _, _ ->
             ScreenKeyboardEvents.afterKeyPress(screen).register { _, event ->
+                // TODO: Make chat available again but only copy when a tooltip is visible
                 if (screen is ChatScreen) return@register
                 if (event.key == (COPY as KeyMappingAccessor).key.value) {
                     if (TooltipUtil.canRender) {

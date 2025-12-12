@@ -16,7 +16,7 @@ object Config : ConfigKt("toolshot/config") {
         this.translation = "config.toolshot.saveFile"
     }
 
-    var scale by int(1) {
+    var scale by int(4) {
         this.translation = "config.toolshot.scale"
     }
 }
