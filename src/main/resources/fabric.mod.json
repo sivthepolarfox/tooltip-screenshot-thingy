@@ -3,12 +3,14 @@
     "id": "toolshot",
     "version": "${version}",
     "name": "Toolshot",
-    "description": "",
-    "authors": [ ],
+    "description": "Screenshot Tooltips just like they look in game!",
+    "authors": [
+        "Siv"
+    ],
     "contact": { },
-    "license": "All-Rights-Reserved",
+    "license": "MIT",
     "environment": "client",
-    "icon": "paw-icon-mrrow.png",
+    "icon": "icon.png",
     "entrypoints": {
         "client": [
             {
