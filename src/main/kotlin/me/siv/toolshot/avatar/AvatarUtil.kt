@@ -2,37 +2,47 @@ package me.siv.toolshot.avatar
 
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.pipeline.TextureTarget
-import com.mojang.blaze3d.platform.Lighting
 import com.mojang.blaze3d.systems.CommandEncoder
 import com.mojang.blaze3d.systems.GpuDevice
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.ByteBufferBuilder
-import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.blaze3d.vertex.VertexConsumer
+import it.unimi.dsi.fastutil.objects.Object2ObjectSortedMaps
 import me.siv.toolshot.Toolshot
 import me.siv.toolshot.Toolshot.mc
 import me.siv.toolshot.clipboard.ClipboardUtil
 import me.siv.toolshot.config.Config
 import me.siv.toolshot.tooltip.GuiRendererInterface
-import me.siv.toolshot.tooltip.OverrideVertexProvider
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.render.GuiRenderer
-import net.minecraft.client.gui.render.pip.GuiEntityRenderer
 import net.minecraft.client.gui.render.state.GuiRenderState
-import net.minecraft.client.gui.render.state.pip.GuiEntityRenderState
-import net.minecraft.client.renderer.GlobalSettingsUniform
-import net.minecraft.client.renderer.SubmitNodeStorage
+import net.minecraft.client.renderer.*
+import net.minecraft.client.renderer.RenderStateShard.LIGHTMAP
+import net.minecraft.client.renderer.RenderStateShard.OVERLAY
 import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.client.renderer.fog.FogRenderer
-import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.LivingEntity
 import org.joml.Quaternionf
 import org.joml.Vector3f
+import java.util.function.Function
 
 object AvatarUtil {
 
     val Component.stripped: String get() = this.string.replace(Regex("§."), "")
+
+    val AVATAR_LAYER: Function<RenderTarget, RenderType> = Function { rt ->
+        RenderType.create(
+            "avatar",
+            1536,
+            RenderPipelines.ENTITY_DECAL,
+            RenderType.CompositeState.builder().setTextureState(RenderStateShard.NO_TEXTURE)
+                .setOutputState(RenderStateShard.OutputStateShard("avatar") { rt })
+                .setLightmapState(LIGHTMAP).setOverlayState(OVERLAY).createCompositeState(false)
+        )
+    }
 
     fun meow() {
         val device: GpuDevice = RenderSystem.getDevice()
@@ -138,5 +148,22 @@ object AvatarUtil {
         //     guiGraphics.scissorStack.peek()
         // )
         guiGraphics.submitEntityRenderState(entityRenderState, f, vector3f, quaternionf, quaternionf1, i, j, k, l)
+    }
+}
+
+class OverrideVertexProvider(bufferAllocator: ByteBufferBuilder, rt: RenderTarget) : MultiBufferSource.BufferSource(
+    bufferAllocator,
+    Object2ObjectSortedMaps.emptyMap()
+) {
+    private val currentLayer: RenderType = AvatarUtil.AVATAR_LAYER.apply(rt)
+    var bufferBuilder: BufferBuilder = BufferBuilder(this.sharedBuffer, currentLayer.mode(), currentLayer.format())
+
+    override fun getBuffer(renderType: RenderType): VertexConsumer {
+        return this.bufferBuilder
+    }
+
+    fun finishDrawing() {
+        this.startedBuilders[this.currentLayer] = this.bufferBuilder
+        this.endBatch(this.currentLayer)
     }
 }

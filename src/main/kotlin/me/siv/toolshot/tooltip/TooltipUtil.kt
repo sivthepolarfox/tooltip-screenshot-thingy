@@ -1,11 +1,7 @@
 package me.siv.toolshot.tooltip
 
-import com.ibm.icu.text.SimpleDateFormat
-import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.pipeline.TextureTarget
-import com.mojang.blaze3d.platform.MacosUtil
-import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.CommandEncoder
 import com.mojang.blaze3d.systems.GpuDevice
 import com.mojang.blaze3d.systems.RenderSystem
@@ -15,7 +11,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import it.unimi.dsi.fastutil.objects.Object2ObjectSortedMaps
 import me.siv.toolshot.Toolshot
 import me.siv.toolshot.clipboard.ClipboardUtil
-import me.siv.toolshot.clipboard.MacOsCompat
 import me.siv.toolshot.config.Config
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.render.GuiRenderer
@@ -23,14 +18,7 @@ import net.minecraft.client.gui.render.state.GuiRenderState
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil
 import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.fog.FogRenderer
-import net.minecraft.network.chat.Component
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.nio.channels.Channels
-import java.util.*
 import java.util.function.Function
-import javax.imageio.ImageIO
 import kotlin.math.max
 
 object TooltipUtil {
