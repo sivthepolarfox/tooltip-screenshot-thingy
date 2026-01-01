@@ -83,6 +83,10 @@ object AvatarUtil {
         )
 
         encoder.clearColorTexture(renderTarget.colorTexture, 0)
+        context.pose().scale(
+            mc.window.guiScaledWidth / (75 - 26).toFloat(),
+            mc.window.guiScaledHeight / 70f,
+        )
 
         val quaternionf = Quaternionf().rotateZ(Math.PI.toFloat())
 
