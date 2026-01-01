@@ -23,21 +23,23 @@ object Toolshot : ClientModInitializer, Logger by LoggerFactory.getLogger(MODID)
     var config: ResourcefulConfig? = null
 
     private val categoryResource = ResourceLocation.fromNamespaceAndPath(MODID, "main")
+    //? if > 1.21.8 {
     val CATEGORY: KeyMapping.Category = KeyMapping.Category.register(categoryResource)
+    //? }
 
     val COPY: KeyMapping = KeyBindingHelper.registerKeyBinding(
         KeyMapping(
             "key.toolshot.copy",
             GLFW.GLFW_KEY_UNKNOWN,
-            CATEGORY
+            /*? if > 1.21.8 {*/CATEGORY,/*?} else {*//*"key.category.toolshot.main"*//*?}*/
         )
     )
 
     override fun onInitializeClient() {
         config = Config.register(configurator)
         ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
-            ScreenKeyboardEvents.allowKeyPress(screen).register { _, event ->
-                if (COPY.matches(event)) {
+            ScreenKeyboardEvents.allowKeyPress(screen).register { /*? if > 1.21.8 {*/ _, event /*?} else {*//*screen, key, scancode, modifiers*//*?}*/ ->
+                if (COPY.matches(/*? if > 1.21.8 {*/event/*?} else {*//*key, scancode*//*?}*/)) {
                     val state = TooltipUtil.lastState ?: return@register true
                     TooltipUtil.copyTooltipToClipboard(state)
                     return@register false

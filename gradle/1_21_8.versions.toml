@@ -1,0 +1,19 @@
+[versions]
+
+minecraft = "1.21.8"
+fabricApi = "0.136.1+1.21.8"
+
+resourcefulConfig = "3.7.3"
+resourcefulConfigKt = "3.5.15"
+
+modmenu = "15.0.0"
+
+[libraries]
+
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+fabricApi = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabricApi" }
+
+resourcefulconfig = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.21.7", version.ref = "resourcefulConfig" }
+resourcefulconfigkt = { module = "com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-1.21.5", version.ref = "resourcefulConfigKt" }
+
+modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu" }

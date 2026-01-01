@@ -5,6 +5,7 @@ plugins {
     idea
     kotlin("jvm") version "2.2.21"
     alias(libs.plugins.loom)
+    `versioned-catalogues`
 }
 
 repositories {
@@ -14,20 +15,20 @@ repositories {
 }
 
 dependencies {
-    minecraft(libs.minecraft)
+    minecraft(versionedCatalog["minecraft"])
     mappings(loom.officialMojangMappings())
 
     modImplementation(libs.fabricLoader)
-    modImplementation(libs.fabricApi)
+    modImplementation(versionedCatalog["fabricApi"])
     modImplementation(libs.fabricKt)
 
     modImplementation(libs.devauth)
 
-    modImplementation(libs.resourcefulconfig)
-    modImplementation(libs.resourcefulconfigkt)
-    include(libs.resourcefulconfigkt)
+    modImplementation(versionedCatalog["resourcefulconfig"])
+    modImplementation(versionedCatalog["resourcefulconfigkt"])
+    include(versionedCatalog["resourcefulconfigkt"])
 
-    modImplementation(libs.modmenu)
+    modImplementation(versionedCatalog["modmenu"])
 
     compileOnly(libs.objc)
 }
@@ -35,24 +36,25 @@ dependencies {
 loom {
     accessWidenerPath = rootProject.file("src/main/resources/toolshot.accesswidener")
 
-    runs {
-        getByName("client") {
-            property("devauth.configDir", rootProject.file(".devauth").absolutePath)
-        }
+    runConfigs["client"].apply {
+        ideConfigGenerated(true)
+        runDir = "../../run"
+        vmArg("-Dfabric.modsFolder=" + '"' + rootProject.projectDir.resolve("run/${stonecutter.current.version.replace(".", "")}Mods").absolutePath + '"')
+        property("devauth.configDir", rootProject.file(".devauth").absolutePath)
     }
 }
 
 tasks {
     processResources {
         inputs.property("version", project.version)
-        inputs.property("minecraft_version", libs.versions.minecraft.get())
+        inputs.property("minecraft_version", versionedCatalog.versions["minecraft"])
         inputs.property("loader_version", libs.versions.fabricLoader.get())
 
         filesMatching("fabric.mod.json") {
             expand(
                 "version" to project.version,
                 "loader_version" to libs.versions.fabricLoader.get(),
-                "minecraft_version" to libs.versions.minecraft.get(),
+                "minecraft_version" to versionedCatalog.versions["minecraft"],
             )
         }
     }
@@ -64,6 +66,15 @@ tasks {
     compileKotlin {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_21
+        }
+    }
+
+    build {
+        doLast {
+            val sourceFile = rootProject.projectDir.resolve("versions/${project.name}/build/libs/${stonecutter.current.version}-$version.jar")
+            val targetFile = rootProject.projectDir.resolve("build/libs/SnowySpirit-$version-${stonecutter.current.version}.jar")
+            targetFile.parentFile.mkdirs()
+            targetFile.writeBytes(sourceFile.readBytes())
         }
     }
 

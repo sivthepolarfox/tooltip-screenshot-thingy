@@ -89,7 +89,15 @@ object TooltipUtil {
         val renderState = GuiRenderState()
         val context = GuiGraphics(minecraft, renderState)
 
-        val renderer = GuiRenderer(renderState, consumer, SubmitNodeStorage(), minecraft.gameRenderer.featureRenderDispatcher, emptyList())
+        val renderer = GuiRenderer(
+            renderState,
+            consumer,
+            //? if > 1.21.8 {
+            SubmitNodeStorage(),
+            minecraft.gameRenderer.featureRenderDispatcher,
+            //?}
+            emptyList()
+        )
 
         encoder.clearColorTexture(renderTarget.colorTexture, 0)
         context.pose().scale(
@@ -111,7 +119,7 @@ object TooltipUtil {
             component.renderImage(font, 0 + 12, yOffset + 12, fullWidth, height, context)
             yOffset += component.getHeight(font) + (if (component == list.first()) 2 else 0)
         }
-        context.renderDeferredElements()
+        context./*? if > 1.21.8 {*/renderDeferredElements()/*? } else {*//*renderDeferredTooltip()*//*?}*/
         (renderer as GuiRendererInterface).`toolShot$render`(minecraft.gameRenderer.fogRenderer.getBuffer(FogRenderer.FogMode.NONE), renderTarget)
 
         consumer.finishDrawing()

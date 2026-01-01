@@ -1,16 +1,11 @@
 [versions]
 
 # Minecraft
-minecraft = "1.21.10"
-fabricLoader = "0.18.2"
-fabricApi = "0.138.3+1.21.10"
+fabricLoader = "0.18.4"
 fabricKt = "1.13.7+kotlin.2.2.21"
 loom = "1.12-SNAPSHOT"
 
 # Dependencies
-resourcefulConfig = "3.9.1"
-resourcefulConfigKt = "3.5.15"
-modmenu = "16.0.0-rc.1"
 objc = "1.2"
 
 # Dev Dependencies
@@ -18,17 +13,11 @@ devauth = "1.2.1"
 
 [libraries]
 
-minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
-
-resourcefulconfig = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.21.9", version.ref = "resourcefulConfig" }
-resourcefulconfigkt = { module = "com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-1.21.5", version.ref = "resourcefulConfigKt" }
 fabricLoader = { module = "net.fabricmc:fabric-loader", version.ref = "fabricLoader" }
-fabricApi = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabricApi" }
 fabricKt = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabricKt" }
 
 devauth = { module = "me.djtheredstoner:DevAuth-fabric", version.ref = "devauth" }
 
-modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu" }
 objc = { module = "ca.weblite:java-objc-bridge", version.ref = "objc" }
 
 [plugins]
