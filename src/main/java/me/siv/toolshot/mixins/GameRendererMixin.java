@@ -1,7 +1,7 @@
 package me.siv.toolshot.mixins;
 
 
-import me.siv.toolshot.TooltipUtil;
+import me.siv.toolshot.tooltip.TooltipUtil;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

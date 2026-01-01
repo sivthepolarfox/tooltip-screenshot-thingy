@@ -2,8 +2,11 @@ package me.siv.toolshot
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefulconfig.api.types.ResourcefulConfig
+import me.siv.toolshot.avatar.AvatarUtil
 import me.siv.toolshot.config.Config
+import me.siv.toolshot.tooltip.TooltipUtil
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
@@ -35,6 +38,14 @@ object Toolshot : ClientModInitializer, Logger by LoggerFactory.getLogger(MODID)
         )
     )
 
+    val RENDER_AVATAR: KeyMapping = KeyBindingHelper.registerKeyBinding(
+        KeyMapping(
+            "key.toolshot.render_avatar",
+            GLFW.GLFW_KEY_UNKNOWN,
+            /*? if > 1.21.8 {*/CATEGORY/*?} else {*//*"key.category.toolshot.main"*//*?}*/
+        )
+    )
+
     override fun onInitializeClient() {
         config = Config.register(configurator)
         ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
@@ -45,6 +56,12 @@ object Toolshot : ClientModInitializer, Logger by LoggerFactory.getLogger(MODID)
                     return@register false
                 }
                 return@register true
+            }
+        }
+
+        ClientTickEvents.END_CLIENT_TICK.register { _ ->
+            if (RENDER_AVATAR.consumeClick()) {
+                AvatarUtil.meow()
             }
         }
     }

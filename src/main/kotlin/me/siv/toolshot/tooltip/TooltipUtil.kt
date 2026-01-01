@@ -1,4 +1,4 @@
-package me.siv.toolshot
+package me.siv.toolshot.tooltip
 
 import com.ibm.icu.text.SimpleDateFormat
 import com.mojang.blaze3d.buffers.GpuBuffer
@@ -13,6 +13,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.ByteBufferBuilder
 import com.mojang.blaze3d.vertex.VertexConsumer
 import it.unimi.dsi.fastutil.objects.Object2ObjectSortedMaps
+import me.siv.toolshot.Toolshot
 import me.siv.toolshot.clipboard.ClipboardUtil
 import me.siv.toolshot.clipboard.MacOsCompat
 import me.siv.toolshot.config.Config
@@ -74,8 +75,6 @@ object TooltipUtil {
         val minecraft = Toolshot.mc
         val globalUniform = GlobalSettingsUniform()
 
-        minecraft.gameRenderer
-
         globalUniform.update(
             minecraft.window.width,
             minecraft.window.height,
@@ -123,74 +122,10 @@ object TooltipUtil {
         (renderer as GuiRendererInterface).`toolShot$render`(minecraft.gameRenderer.fogRenderer.getBuffer(FogRenderer.FogMode.NONE), renderTarget)
 
         consumer.finishDrawing()
-        saveImageToClipboard(renderTarget, MacosUtil.IS_MACOS, Config.saveFile)
+        ClipboardUtil.saveImageToClipboard(renderTarget, Config.saveFile, "tooltip", "tooltip")
 
         globalUniform.close()
         renderer.close()
-    }
-
-    fun saveImageToClipboard(renderTarget: RenderTarget, macOs: Boolean, shouldSave: Boolean) {
-        val width = renderTarget.width
-        val height = renderTarget.height
-
-        val gpuTexture = renderTarget.colorTexture
-        val gpuBuffer = RenderSystem.getDevice().createBuffer(
-            null,
-            GpuBuffer.USAGE_COPY_DST or GpuBuffer.USAGE_MAP_READ,
-            renderTarget.width * renderTarget.height * (renderTarget.colorTexture?.format?.pixelSize() ?: 4)
-        )
-        val encoder = RenderSystem.getDevice().createCommandEncoder()
-        RenderSystem.getDevice().createCommandEncoder().copyTextureToBuffer(gpuTexture, gpuBuffer, 0, {
-            try {
-                val readView = encoder.mapBuffer(gpuBuffer, true, false)
-                val image = NativeImage(width, height, false)
-
-                for (k in 0..<height) {
-                    for (l in 0..<width) {
-                        val m = readView.data().getInt((l + k * width) * gpuTexture!!.format.pixelSize())
-                        image.setPixelABGR(l, height - k - 1, m)
-                    }
-                }
-                try {
-                    var copied = false
-                    if (shouldSave || macOs) {
-                        val screenshotDir = File("screenshots/tooltip")
-                        screenshotDir.mkdirs()
-
-                        val sdf = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
-                        val currentDate = sdf.format(Date())
-
-                        val file = File(screenshotDir, "tooltip_$currentDate.png")
-                        image.writeToFile(file)
-                        if (macOs) {
-                            copied = MacOsCompat.doCopyMacOS(file.absolutePath)
-                            if (!shouldSave) file.delete()
-                        }
-                    }
-                    if (!macOs) {
-                        val outputStream = ByteArrayOutputStream()
-                        val channel = Channels.newChannel(outputStream)
-                        image.writeToChannel(channel)
-                        channel.close()
-
-                        val inputStream = ByteArrayInputStream(outputStream.toByteArray())
-                        val bufferedImage = ImageIO.read(inputStream)
-                        copied = ClipboardUtil.copy(bufferedImage)
-                    }
-                    val message = if (copied) {
-                        Component.translatable("toolshot.copy_success")
-                    } else {
-                        Component.translatable("toolshot.copy_failure")
-                    }
-                    Toolshot.mc.gui.chat.addMessage(Component.literal("§7[Toolshot] ").append(message))
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            } finally {
-                gpuBuffer.close()
-                renderTarget.destroyBuffers()
-            }
-        }, 0)
     }
 }
 

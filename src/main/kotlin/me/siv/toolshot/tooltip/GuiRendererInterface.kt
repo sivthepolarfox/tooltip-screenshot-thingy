@@ -1,4 +1,4 @@
-package me.siv.toolshot
+package me.siv.toolshot.tooltip
 
 import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.pipeline.RenderTarget
